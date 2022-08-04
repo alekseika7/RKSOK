@@ -16,6 +16,7 @@ from exceptions import (
     CanNotParseRequestError,
     CommandExecTimeoutError,
     ReadTimeoutError,
+    RequestCheckBaseException,
     UnknownControlServerResponseError,
 )
 from models.models import RequestData, ControlServerConf, ControlServerResponse
@@ -96,11 +97,17 @@ async def _get_control_server_permission(control_server: ControlServerConf, requ
 async def process_client_request(request: str, db_client: RKSOKDatabaseClient) -> str:
     """"""
     rksok_type = RKSOKProtocolFirstVersion
-
+    response_incorrect = (
+        rksok_type.configuration.response_names.incorrect +
+        ' ' +
+        rksok_type.configuration.protocol +
+        REQUEST_END
+    )
     try:
         parsed_request = _parse_request(request=request)
-    except CanNotParseRequestError as parsing_error:
-        return f'{rksok_type.configuration.response_names.incorrect} {rksok_type.configuration.protocol}{REQUEST_END}'
+        rksok = rksok_type(db_client=db_client, request_data=parsed_request)
+    except (CanNotParseRequestError, RequestCheckBaseException) as parsing_error:
+        return response_incorrect
 
     control_server = ControlServerConf(
         host=CONTROL_SERVER_HOST,
@@ -116,10 +123,9 @@ async def process_client_request(request: str, db_client: RKSOKDatabaseClient) -
         raise UnknownControlServerResponseError(
             f'Unknown response! Available variants:\n{control_server.responses.yes}, {control_server.responses.no}')
 
-    rksok = rksok_type(db_client=db_client)
     try:
         response = await asyncio.wait_for(
-            rksok.process_request(request_data=parsed_request), timeout=COMMAND_EXEC_TIMEOUT
+            rksok.process_request(), timeout=COMMAND_EXEC_TIMEOUT
         )
     except asyncio.TimeoutError:
         raise CommandExecTimeoutError(
