@@ -3,7 +3,6 @@ from typing import NamedTuple
 
 
 class RequestData(NamedTuple):
-    """"""
     command: str
     name: str
     protocol: str
@@ -11,13 +10,11 @@ class RequestData(NamedTuple):
 
 
 class ControlServerResponse(NamedTuple):
-    """"""
     yes: str
     no: str
 
 
 class ControlServerConf(NamedTuple):
-    """"""
     host: str
     port: int
     ask_command: str
@@ -26,14 +23,12 @@ class ControlServerConf(NamedTuple):
 
 
 class RKSOKServerResponses(NamedTuple):
-    """"""
     ok: str
     not_found: str
     incorrect: str
 
 
 class RKSOKServerCommands(NamedTuple):
-    """"""
     get: str
     put: str
     delete: str

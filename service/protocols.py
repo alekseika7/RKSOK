@@ -16,7 +16,7 @@ from models.models import (
 
 
 class RKSOKProtocol:
-    """"""
+    """Base class for RKSOK server protocols."""
     configuration: RKSOKServerConf
 
     def __init__(self, db_client: RKSOKDatabaseClient, request_data: RequestData) -> None:
@@ -25,7 +25,7 @@ class RKSOKProtocol:
         self._check_request_data()
 
     def _check_request_data(self) -> None:
-        """"""
+        """Checks command, name and protocol correctness."""
         available_commands = [command for command in self.configuration.command_names]
         if self._request.command not in available_commands:
             raise UnknownRequestCommandError(
@@ -41,25 +41,25 @@ class RKSOKProtocol:
             )
 
     async def _get(self) -> TaskResult:
-        """"""
-        raise NotImplementedError('Abstract method!')
+        """Abstract method for getting phone by name."""
+        raise NotImplementedError()
 
     async def _put(self) -> TaskResult:
-        """"""
-        raise NotImplementedError('Abstract method!')
+        """Abstract method for writing new data."""
+        raise NotImplementedError()
 
     async def _delete(self) -> TaskResult:
-        """"""
-        raise NotImplementedError('Abstract method!')
+        """Abstract method for deleting phone from db."""
+        raise NotImplementedError()
 
     def _format_response(self, response_header: str, value: str | None) -> str:
-        """"""
+        """Formats proper output."""
         first_row = f'{response_header} {self.configuration.protocol}'
         optional_fields = '\r\n' + value if value else ''
         return first_row + optional_fields + REQUEST_END
 
     async def process_request(self) -> str:
-        """"""
+        """Processes client request in form of RequestData, returns corresponding result."""
         response = None
         match self._request.command:
             case self.configuration.command_names.get:
@@ -77,7 +77,7 @@ class RKSOKProtocol:
 
 
 class RKSOKProtocolFirstVersion(RKSOKProtocol):
-    """"""
+    """Realisation of the РКСОК/1.0 protocol."""
     configuration = RKSOKServerConf(
         protocol='РКСОК/1.0',
         max_name_length=30,
@@ -89,13 +89,13 @@ class RKSOKProtocolFirstVersion(RKSOKProtocol):
         super().__init__(db_client=db_client, request_data=request_data)
 
     async def _get(self) -> TaskResult:
-        """"""
+        """Sends request to db to get phone by name."""
         return await self._db_client.get(name=self._request.name)
 
     async def _put(self) -> TaskResult:
-        """"""
+        """Sends request to db to create (update) new record."""
         return await self._db_client.update(name=self._request.name, value=self._request.value)
 
     async def _delete(self) -> TaskResult:
-        """"""
+        """Sends request to db to delete record with specified name."""
         return await self._db_client.delete(name=self._request.name)
