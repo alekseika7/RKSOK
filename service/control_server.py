@@ -16,7 +16,7 @@ CONTROL_SERVER_CONF = ControlServerConf(
 )
 
 
-async def _ask_control_server(server_conf: ControlServerConf, request: str) -> str:
+async def get_control_server_response(server_conf: ControlServerConf, request: str) -> str:
     """
     Sends permission request to the control server, then reads response.
     If host and port of the control server are incorrect function will return empty string.
@@ -35,11 +35,5 @@ async def _ask_control_server(server_conf: ControlServerConf, request: str) -> s
     writer.close()
     await writer.wait_closed()
 
+    logger.info(f'Control server response: {response}')
     return response
-
-
-async def get_control_server_response(request: str, server_conf: ControlServerConf) -> str:
-    """Gets response from control server that is specified with ControlServerConf."""
-    control_server_response = await _ask_control_server(server_conf=server_conf, request=request)
-    logger.info(f'Control server response: {control_server_response}')
-    return control_server_response
