@@ -8,7 +8,7 @@ from service.logger import logger
 from service.request_handler import process_client_request
 from utils import check_host_port
 
-mongo_client = RKSOKMongoClient()
+_mongo_client = RKSOKMongoClient()
 
 
 async def process_request(reader: asyncio.StreamReader, writer: asyncio.StreamWriter) -> None:
@@ -19,9 +19,9 @@ async def process_request(reader: asyncio.StreamReader, writer: asyncio.StreamWr
         request = await read_data_with_timeout(reader=reader)
         logger.info(f'Received {request!r} from {client_address!r}')
 
-        await mongo_client.connect_to_db(user_id=client_address[0])
+        await _mongo_client.connect_to_db(user_id=client_address[0])
         logger.debug('Starting request processing...')
-        response = await process_client_request(request=request, db_client=mongo_client)
+        response = await process_client_request(request=request, db_client=_mongo_client)
         logger.info(f'Send {response!r} to {client_address!r}')
     except ServerBaseException as server_exception:
         logger.error(f'Exception happened: {server_exception}')
