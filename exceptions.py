@@ -1,3 +1,23 @@
+class CanNotParseRequestError(Exception):
+    pass
+
+
+class MissingRKSOKConfigurationError(Exception):
+    pass
+
+
+class UncheckedRequestError(Exception):
+    pass
+
+
+class IncorrectHostError(Exception):
+    pass
+
+
+class IncorrectPortError(Exception):
+    pass
+
+
 # ---------------- Exceptions for catching in process_request func from server.py ----------------
 class ServerBaseException(Exception):
     """
@@ -41,9 +61,4 @@ class UnknownRequestProtocolError(RequestCheckBaseException):
 
 
 class ExceededNameLengthError(RequestCheckBaseException):
-    pass
-
-
-# ---------------- Exceptions for checking raw request in _parse_request func in request_handler.py ----------------
-class CanNotParseRequestError(Exception):
     pass
