@@ -17,10 +17,10 @@ async def _read_data(reader: asyncio.StreamReader, block_size: int, separator: s
 
 
 async def read_data_with_timeout(
-    reader: asyncio.StreamReader,
-    block_size: Optional[int] = READ_BLOCK_SIZE,
-    separator: Optional[str] = REQUEST_END,
-    timeout: Optional[int] = CLIENT_REQUEST_TIMEOUT,
+        reader: asyncio.StreamReader,
+        block_size: Optional[int] = READ_BLOCK_SIZE,
+        separator: Optional[str] = REQUEST_END,
+        timeout: Optional[int] = CLIENT_REQUEST_TIMEOUT,
 ) -> str:
     """Reads data from the stream assuming timeout"""
     try:

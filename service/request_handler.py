@@ -2,7 +2,7 @@ import asyncio
 import re
 from typing import Optional, Type
 
-from config import (DB_QUERY_EXEC_TIMEOUT, REQUEST_END)
+from config import DB_QUERY_EXEC_TIMEOUT, REQUEST_END
 from exceptions import (
     CanNotParseRequestError,
     CommandExecTimeoutError,
@@ -42,10 +42,10 @@ def _parse_request(request: str) -> RequestData:
 
 
 async def process_client_request(
-    request: str,
-    db_client: RKSOKDatabaseClient,
-    rksok_type: Optional[Type[RKSOKProtocol]] = RKSOKProtocolFirstVersion,
-    control_server_conf: Optional[ControlServerConf] = CONTROL_SERVER_CONF,
+        request: str,
+        db_client: RKSOKDatabaseClient,
+        rksok_type: Optional[Type[RKSOKProtocol]] = RKSOKProtocolFirstVersion,
+        control_server_conf: Optional[ControlServerConf] = CONTROL_SERVER_CONF,
 ) -> str:
     """
     Takes raw request and database client, parses request parts and checks their correctness,

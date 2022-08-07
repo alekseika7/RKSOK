@@ -4,7 +4,6 @@ from loguru import logger
 
 from config import SOURCE_DIR_PATH
 
-
 _format = '{time:YYYY:MM:DD:HH:mm:ss:SSS} | <level>{level: <8}</level> | {module}:{function}:{line} - ' \
           '<level>{message}</level>'
 logger.remove(0)
