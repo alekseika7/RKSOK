@@ -8,10 +8,11 @@ from service.logger import logger
 from service.request_handler import process_client_request
 from utils import check_host_port
 
+mongo_client = RKSOKMongoClient()
+
 
 async def process_request(reader: asyncio.StreamReader, writer: asyncio.StreamWriter) -> None:
     """Callback for asyncio streams server."""
-    mongo_client = RKSOKMongoClient()
     try:
         client_address = writer.get_extra_info('peername')
         logger.debug(f'New connection from {client_address!r}')
