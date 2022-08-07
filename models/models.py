@@ -1,20 +1,23 @@
+from dataclasses import dataclass
 from enum import Enum
-from typing import NamedTuple
 
 
-class RequestData(NamedTuple):
+@dataclass(frozen=True, slots=True)
+class RequestData:
     command: str
     name: str
     protocol: str
     value: str | None
 
 
-class ControlServerResponse(NamedTuple):
+@dataclass(frozen=True, slots=True)
+class ControlServerResponse:
     yes: str
     no: str
 
 
-class ControlServerConf(NamedTuple):
+@dataclass(frozen=True, slots=True)
+class ControlServerConf:
     host: str
     port: int
     ask_command: str
@@ -22,19 +25,22 @@ class ControlServerConf(NamedTuple):
     responses: ControlServerResponse
 
 
-class RKSOKServerResponses(NamedTuple):
+@dataclass(frozen=True, slots=True)
+class RKSOKServerResponses:
     ok: str
     not_found: str
     incorrect: str
 
 
-class RKSOKServerCommands(NamedTuple):
+@dataclass(frozen=True, slots=True)
+class RKSOKServerCommands:
     get: str
     put: str
     delete: str
 
 
-class RKSOKServerConf(NamedTuple):
+@dataclass(frozen=True, slots=True)
+class RKSOKServerConf:
     protocol: str
     max_name_length: int
     command_names: RKSOKServerCommands
@@ -46,6 +52,7 @@ class TaskStatus(Enum):
     NOT_OK = 'not ok'
 
 
-class TaskResult(NamedTuple):
+@dataclass(frozen=True, slots=True)
+class TaskResult:
     status: TaskStatus
     result: str | None
