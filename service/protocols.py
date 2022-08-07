@@ -1,7 +1,11 @@
+from dataclasses import astuple
+
 from config import REQUEST_END
 from service.db import RKSOKDatabaseClient
 from exceptions import (
     ExceededNameLengthError,
+    MissingRKSOKConfigurationError,
+    UncheckedRequestError,
     UnknownRequestCommandError,
     UnknownRequestProtocolError,
 )
@@ -19,14 +23,20 @@ class RKSOKProtocol:
     """Base class for RKSOK server protocols."""
     configuration: RKSOKServerConf
 
-    def __init__(self, db_client: RKSOKDatabaseClient, request_data: RequestData) -> None:
-        self._db_client = db_client
-        self._request = request_data
-        self._check_request_data()
+    def __init__(self, db_client: RKSOKDatabaseClient) -> None:
+        try:
+            self.configuration
+        except AttributeError:
+            raise MissingRKSOKConfigurationError('Define configuration class attribute!')
 
-    def _check_request_data(self) -> None:
+        self._db_client = db_client
+        self._request = None
+        self._is_checked = False
+
+    def check_request_data(self, request_data: RequestData) -> None:
+        self._request = request_data
         """Checks command, name and protocol correctness."""
-        available_commands = [command for command in self.configuration.command_names]
+        available_commands = [command for command in astuple(self.configuration.command_names)]
         if self._request.command not in available_commands:
             raise UnknownRequestCommandError(
                 f'Unknown command {self._request.command}! Available commands:\n{available_commands}'
@@ -39,6 +49,7 @@ class RKSOKProtocol:
             raise UnknownRequestProtocolError(
                 f'Unknown protocol {self._request.protocol}! Protocol must be {self.configuration.protocol}'
             )
+        self._is_checked = True
 
     async def _get(self) -> TaskResult:
         """Abstract method for getting phone by name."""
@@ -60,6 +71,8 @@ class RKSOKProtocol:
 
     async def process_request(self) -> str:
         """Processes client request in form of RequestData, returns corresponding result."""
+        if not self._is_checked:
+            raise UncheckedRequestError('Run check_request_data() first!')
         response = None
         match self._request.command:
             case self.configuration.command_names.get:
@@ -85,8 +98,8 @@ class RKSOKProtocolFirstVersion(RKSOKProtocol):
         response_names=RKSOKServerResponses(ok='НОРМАЛДЫКС', not_found='НИНАШОЛ', incorrect='НИПОНЯЛ')
     )
 
-    def __init__(self, db_client: RKSOKDatabaseClient, request_data: RequestData) -> None:
-        super().__init__(db_client=db_client, request_data=request_data)
+    def __init__(self, db_client: RKSOKDatabaseClient) -> None:
+        super().__init__(db_client=db_client)
 
     async def _get(self) -> TaskResult:
         """Sends request to db to get phone by name."""
