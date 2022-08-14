@@ -2,10 +2,6 @@ class CanNotParseRequestError(Exception):
     pass
 
 
-class MissingRKSOKConfigurationError(Exception):
-    pass
-
-
 class UncheckedRequestError(Exception):
     pass
 
@@ -40,6 +36,10 @@ class ReadTimeoutError(ServerBaseException):
 
 
 class CommandExecTimeoutError(ServerBaseException):
+    pass
+
+
+class MissingRKSOKConfigurationError(ServerBaseException):
     pass
 
 

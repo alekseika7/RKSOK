@@ -34,8 +34,8 @@ class RKSOKProtocol:
         self._is_checked = False
 
     def check_request_data(self, request_data: RequestData) -> None:
-        self._request = request_data
         """Checks command, name and protocol correctness."""
+        self._request = request_data
         available_commands = [command for command in astuple(self.configuration.command_names)]
         if self._request.command not in available_commands:
             raise UnknownRequestCommandError(
