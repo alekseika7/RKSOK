@@ -38,13 +38,13 @@ def standardize_phone_form(phone: str = Form()) -> Response:
     return Response(response)
 
 
-@app.post('/unify_phone_from_query')
+@app.get('/unify_phone_from_query')
 def standardize_phone_form(phone: str) -> Response:
     response = standardize_phone(raw_number=phone)
     return Response(response)
 
 
-@app.post('/unify_phone_from_cookies')
+@app.get('/unify_phone_from_cookies')
 def standardize_phone_form(phone: str = Cookie(default=None)) -> Response:
     response = standardize_phone(raw_number=phone)
     return Response(response)
